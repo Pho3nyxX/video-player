@@ -14,6 +14,7 @@ class VideoPlayer {
         this._playbackSpeed = 1;
         this.currentTimeElement = ".video-current-time";
         this.videoDurationElement = ".video-duration";
+        this.scrubBar = ".scrub-bar";
         this.progressBar = ".scrub-progress";
         this.progressHandle = ".scrub-circle";
 
@@ -214,6 +215,19 @@ class VideoPlayer {
         }
     }
 
+    get scrubBar() {
+        return this._scrubBar;
+    }
+
+    set scrubBar(selector) {
+        let scrubBarLine = this.videoContainer.querySelector(selector);
+        if (scrubBarLine) {
+            this._scrubBar = scrubBarLine;
+        } else {
+            console.error("Cannot load scrub bar");
+        }
+    }
+
     setUpEvents() {
         this.playBtn.addEventListener("click", this.playPause);
         this.fullScreenBtn.addEventListener("click", this.FullExitScreen);
@@ -228,6 +242,7 @@ class VideoPlayer {
         document.addEventListener("keydown", this.keyboardShortcuts);
         this.progressHandle.addEventListener("mousedown", this.progressHandleDownMousePress);
         this.videoElement.addEventListener("seeked", this.seekEventListener);
+        this.scrubBar.addEventListener("click", this.scrubBarPress);
     }
 
     play() {
@@ -485,6 +500,21 @@ class VideoPlayer {
 
     endScrub = (e) => {
         document.removeEventListener("mousemove", this.scrubVideo);
+    }
+
+    scrubBarPress = (e) => {
+        let containerWidth = this.videoContainer.getBoundingClientRect().width;
+
+        let offsetFractional = (e.offsetX / containerWidth);
+
+        let newVideoTime = this.videoElement.duration * offsetFractional;
+
+        let totalPercent = (offsetFractional * 100).toFixed(2);
+
+        this.progressBar.style.width = totalPercent + "%";
+        this.progressHandle.style.left = totalPercent + "%";
+
+        this.videoElement.currentTime = newVideoTime;
     }
 }
 export { VideoPlayer };
