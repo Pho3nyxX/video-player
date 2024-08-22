@@ -601,5 +601,9 @@ class VideoPlayer {
         this.videoElement.volume = newVolume;
         console.log(this.videoElement.volume);
     }
+
+    endScrubVolume = (e) => {
+        document.removeEventListener("mousemove", this.scrubVolume);
+    }
 }
 export { VideoPlayer };
