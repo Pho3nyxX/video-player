@@ -5,7 +5,7 @@ class VideoPlayer {
         this.videoElement = ".video";
         this.playBtn = ".play-pause-btn";
         this.fullScreenBtn = ".full-screen-btn";
-        this.volumeBtn = ".volumn-btn";
+        this.volumeBtn = ".volume-btn";
         this.muteIcon = ".mute-icon";
         this.settingsBtn = ".settings-btn";
         this.settingsMenu = ".settings-menu";
@@ -72,13 +72,13 @@ class VideoPlayer {
     }
 
     get volumeBtn() {
-        return this._volumnBtn;
+        return this._volumeBtn;
     }
 
     set volumeBtn(selector) {
         let btn = this.videoContainer.querySelector(selector);
         if (btn) {
-            this._volumnBtn = btn;
+            this._volumeBtn = btn;
         } else {
             console.error("Cannot mute video");
         }
@@ -103,7 +103,6 @@ class VideoPlayer {
 
     set settingsBtn(selector) {
         let btn = this.videoContainer.querySelector(selector);
-
         if (btn) {
             this._settingsBtn = btn;
         } else {
@@ -117,7 +116,6 @@ class VideoPlayer {
 
     set settingsMenu(selector) {
         let btn = this.videoContainer.querySelector(selector);
-
         if (btn) {
             this._settingsMenu = btn;
         } else {
@@ -141,7 +139,6 @@ class VideoPlayer {
 
     set playbackSpeedMenu(selector) {
         let playbackMenu = this.videoContainer.querySelector(selector);
-
         if (playbackMenu) {
             this._playbackSpeedMenu = playbackMenu;
         } else {
@@ -155,7 +152,6 @@ class VideoPlayer {
 
     set qualityMenu(selector) {
         let quality = this.videoContainer.querySelector(selector);
-
         if (quality) {
             this._qualityMenu = quality;
         } else {
@@ -169,7 +165,6 @@ class VideoPlayer {
 
     set videoDurationElement(selector) {
         let vidTime = this.videoContainer.querySelector(selector);
-
         if (vidTime) {
             this._videoDurationElement = vidTime;
         } else {
@@ -183,7 +178,6 @@ class VideoPlayer {
 
     set currentTimeElement(selector) {
         let vidTime = this.videoContainer.querySelector(selector);
-
         if (vidTime) {
             this._currentTimeElement = vidTime;
         } else {
@@ -197,7 +191,6 @@ class VideoPlayer {
 
     set progressBar(selector) {
         let proBar = this.videoContainer.querySelector(selector);
-
         if (proBar) {
             this._progressBar = proBar;
         } else {
@@ -211,7 +204,6 @@ class VideoPlayer {
 
     set progressHandle(selector) {
         let proHandle = this.videoContainer.querySelector(selector);
-
         if (proHandle) {
             this._progressHandle = proHandle;
         } else {
@@ -288,7 +280,6 @@ class VideoPlayer {
         this.playBtn.addEventListener("click", this.playPause);
         this.fullScreenBtn.addEventListener("click", this.FullExitScreen);
         this.muteIcon.addEventListener("click", this.MuteUnmute);
-        this.volumeBtn.addEventListener("click", this.MuteUnmute);
         this.settingsBtn.addEventListener("click", this.toggleSettingBtn);
         this.settingsMenu.addEventListener("click", this.toggleMenuItem);
         this.playbackSpeedMenu.addEventListener("click", this.clickedSpeed);
@@ -298,9 +289,18 @@ class VideoPlayer {
         document.addEventListener("keydown", this.keyboardShortcuts);
         this.progressHandle.addEventListener("mousedown", this.progressHandleDownMousePress);
         this.videoElement.addEventListener("seeked", this.seekEventListener);
+        this.videoElement.addEventListener("loadedmetadata", this.metaDataLoaded);
         this.scrubBar.addEventListener("click", this.scrubBarPress);
 
         this.volumeProgressHandle.addEventListener("mousedown", this.volumeProgressHandleDownMousePress);
+    }
+
+    playPause = (e) => {
+        if (this.videoElement.paused) {
+            this.play();
+        } else {
+            this.pause();
+        }
     }
 
     play() {
@@ -332,7 +332,11 @@ class VideoPlayer {
         fullscreenBtnIcon.classList.add("bi-arrows-fullscreen");
         fullscreenBtnIcon.classList.remove("bi-fullscreen-exit");
     }
-    
+
+    FullExitScreen = (e) => {
+        this.toggleFullScreen();
+    }
+
     toggleFullScreen() {
         if (document.fullscreenElement) {
             this.exitFullscreen();
@@ -363,72 +367,6 @@ class VideoPlayer {
         this.videoElement.muted = false;
     }
 
-    updatePlaybackSpeed() {
-        this.videoElement.playbackRate = parseFloat(this.playbackSpeed);
-    }
-
-    updatedPlaybackSpeedMenu(newSpeed) {
-        if (this.playbackSpeed !== newSpeed) {
-            let currentSpeedEl = this.videoContainer.querySelector("a[data-value='" + this.playbackSpeed + "']");
-            currentSpeedEl.innerHTML = this.playbackSpeed;
-            let newSpeedEl = this.videoContainer.querySelector("a[data-value='" + newSpeed + "']")
-
-            newSpeedEl.innerHTML = "<i class='bi bi-check-lg'></i>" + newSpeed;
-        }
-    }
-
-    updateCurrentTime(self) {
-        if (!self) {
-            self = this;
-        };
-        self.currentTimeElement.innerHTML = self.convertSecondsToString(self.videoElement.currentTime);
-    }
-
-    updateProgressBar(self) {
-        let currentVideoTime = self.videoElement.currentTime;
-        let videoDuration = self.videoElement.duration;
-        let percentageTime = (currentVideoTime / videoDuration) * 100;
-
-        self.progressBar.style.width = percentageTime + "%";
-        self.progressHandle.style.left = percentageTime + "%";
-    }
-
-    convertSecondsToString(givenSeconds) {
-        let date = new Date(parseInt(givenSeconds * 1000));
-        let hours = date.getUTCHours();
-        let minutes = date.getUTCMinutes();
-        let seconds = date.getSeconds();
-        let timeString = "";
-        if (hours > 0) {
-            timeString = hours.toString().padStart(2, '0') + ':';
-        }
-
-        timeString = minutes.toString().padStart(2, '0') + ':' +
-            seconds.toString().padStart(2, '0');
-
-        return timeString;
-    }
-
-    FullExitScreen = (e) => {
-        this.toggleFullScreen();
-    }
-    
-    playPause = (e) => {
-        if (this.videoElement.paused) {
-            this.play();
-        } else {
-            this.pause();
-        }
-    }
-    
-    MuteUnmute = (e) => {
-        if (this.videoElement.muted) {
-            this.unmute();
-        } else {
-            this.mute();
-        }
-    }
-
     toggleSettingBtn = (e) => {
         this.settingsMenu.classList.toggle("active");
     }
@@ -454,6 +392,33 @@ class VideoPlayer {
         this.playbackSpeed = newSpeed;
     }
 
+    updatePlaybackSpeed() {
+        this.videoElement.playbackRate = parseFloat(this.playbackSpeed);
+    }
+
+    updatedPlaybackSpeedMenu(newSpeed) {
+        if (this.playbackSpeed !== newSpeed) {
+            let currentSpeedEl = this.videoContainer.querySelector("a[data-value='" + this.playbackSpeed + "']");
+            currentSpeedEl.innerHTML = this.playbackSpeed;
+            let newSpeedEl = this.videoContainer.querySelector("a[data-value='" + newSpeed + "']")
+
+            newSpeedEl.innerHTML = "<i class='bi bi-check-lg'></i>" + newSpeed;
+        }
+    }
+
+    checkVideoNearEnd(self) {
+        let event = new Event("videonearend", { bubbles: false, cancelable: false });
+        self.videoElement.dispatchEvent(event);
+
+        clearTimeout(self.videoEndTimer);
+        return true;
+    }
+
+    setVideoEndTimer() {
+        let timeOut = parseInt((this.videoElement.duration - this.videoElement.currentTime) - 12) * 1000;
+        this.videoEndTimer = setTimeout(this.checkVideoNearEnd, timeOut, this);
+    }
+
     clickedSpeed = (e) => {
         if (e.target.tagName.toLowerCase() == "a") {
             let newSpeed = e.target.dataset.value;
@@ -461,18 +426,52 @@ class VideoPlayer {
         }
     }
 
+    convertSecondsToString(givenSeconds) {
+        let date = new Date(parseInt(givenSeconds * 1000));
+        let hours = date.getUTCHours();
+        let minutes = date.getUTCMinutes();
+        let seconds = date.getSeconds();
+        let timeString = "";
+        if (hours > 0) {
+            timeString = hours.toString().padStart(2, '0') + ':';
+        }
+
+        timeString = minutes.toString().padStart(2, '0') + ':' +
+            seconds.toString().padStart(2, '0');
+
+        return timeString;
+    }
+
     seekEventListener = (e) => {
         this.updateCurrentTime(this);
     }
 
+    updateCurrentTime(self) {
+        if (!self) {
+            self = this;
+        };
+        self.currentTimeElement.innerHTML = self.convertSecondsToString(self.videoElement.currentTime);
+    }
+
     videoPlay = (e) => {
         this.currentTimeInterval = setInterval(this.updateCurrentTime, 1000, this);
-        let scrollBarTimer = setInterval(this.updateProgressBar, 16, this);
+        this.progressBarTimer = setInterval(this.updateProgressBar, 16, this);
+        this.setVideoEndTimer();
     }
 
     videoPause = (e) => {
         clearInterval(this.currentTimeInterval);
-        clearInterval(this.scrollBarTimer);
+        clearInterval(this.progressBarTimer);
+        clearTimeout(this.videoEndTimer);
+    }
+
+    updateProgressBar(self) {
+        let currentVideoTime = self.videoElement.currentTime;
+        let videoDuration = self.videoElement.duration;
+        let percentageTime = (currentVideoTime / videoDuration) * 100;
+
+        self.progressBar.style.width = percentageTime + "%";
+        self.progressHandle.style.left = percentageTime + "%";
     }
 
     keyboardShortcuts = (e) => {
@@ -548,7 +547,6 @@ class VideoPlayer {
         let newVideoTime = this.videoElement.duration * (movementFractional + progressBarWidthFractional);
 
         let totalPercent = ((movementFractional + progressBarWidthFractional) * 100).toFixed(2);
-        console.log(totalPercent);
 
         this.progressBar.style.width = totalPercent + "%";
         this.progressHandle.style.left = totalPercent + "%";
@@ -558,6 +556,13 @@ class VideoPlayer {
 
     endScrub = (e) => {
         document.removeEventListener("mousemove", this.scrubVideo);
+        if (!(this.videoElement.paused || this.videoElement.ended)) {
+            clearTimeout(this.videoEndTimer);
+            this.setVideoEndTimer();
+        }
+    }
+
+    metaDataLoaded = (e) => {
     }
 
     scrubBarPress = (e) => {
@@ -574,7 +579,7 @@ class VideoPlayer {
 
         this.videoElement.currentTime = newVideoTime;
     }
-    
+
     volumeProgressHandleDownMousePress = (e) => {
         e.preventDefault();
         document.addEventListener("mousemove", this.scrubVolume);
