@@ -17,6 +17,10 @@ class VideoPlayer {
         this.scrubBar = ".scrub-bar";
         this.progressBar = ".scrub-progress";
         this.progressHandle = ".scrub-circle";
+        this.volumeScrubBar = ".volume-scrub-bar";
+        this.volumeProgressBar = ".volume-scrub-progress";
+        this.volumeProgressHandle = ".volume-scrub-circle";
+        this.volumeScrubContainer = ".volume-scrub-container";
 
         this.videoDurationElement.innerHTML = this.convertSecondsToString(this.videoElement.duration);
 
@@ -228,6 +232,58 @@ class VideoPlayer {
         }
     }
 
+    get volumeScrubContainer() {
+        return this._volumeScrubContainer;
+    }
+
+    set volumeScrubContainer(selector) {
+        let volScrubContainer = this.videoContainer.querySelector(selector);
+        if (volScrubContainer) {
+            this._volumeScrubContainer = volScrubContainer;
+        } else {
+            console.error("Cannot view container");
+        }
+    }
+
+    get volumeProgressBar() {
+        return this._volumeProgressBar;
+    }
+
+    set volumeProgressBar(selector) {
+        let volumeProBar = this.videoContainer.querySelector(selector);
+        if (volumeProBar) {
+            this._volumeProgressBar = volumeProBar;
+        } else {
+            console.error("Cannot view volume progress bar");
+        }
+    }
+
+    get volumeProgressHandle() {
+        return this._volumeProgressHandle;
+    }
+
+    set volumeProgressHandle(selector) {
+        let volumeProHandle = this.videoContainer.querySelector(selector);
+        if (volumeProHandle) {
+            this._volumeProgressHandle = volumeProHandle;
+        } else {
+            console.error("Cannot view volume progress handle");
+        }
+    }
+
+    get volumeScrubBar() {
+        return this._volumeScrubBar;
+    }
+
+    set volumeScrubBar(selector) {
+        let volumeScrubBarLine = this.videoContainer.querySelector(selector);
+        if (volumeScrubBarLine) {
+            this._volumeScrubBar = volumeScrubBarLine;
+        } else {
+            console.error("Cannot load volume scrub bar");
+        }
+    }
+
     setUpEvents() {
         this.playBtn.addEventListener("click", this.playPause);
         this.fullScreenBtn.addEventListener("click", this.FullExitScreen);
@@ -243,6 +299,8 @@ class VideoPlayer {
         this.progressHandle.addEventListener("mousedown", this.progressHandleDownMousePress);
         this.videoElement.addEventListener("seeked", this.seekEventListener);
         this.scrubBar.addEventListener("click", this.scrubBarPress);
+
+        this.volumeProgressHandle.addEventListener("mousedown", this.volumeProgressHandleDownMousePress);
     }
 
     play() {
@@ -515,6 +573,33 @@ class VideoPlayer {
         this.progressHandle.style.left = totalPercent + "%";
 
         this.videoElement.currentTime = newVideoTime;
+    }
+    
+    volumeProgressHandleDownMousePress = (e) => {
+        e.preventDefault();
+        document.addEventListener("mousemove", this.scrubVolume);
+        document.addEventListener("mouseup", this.endScrubVolume);
+    }
+
+    scrubVolume = (e) => {
+        e.preventDefault();
+
+        let volumeScrubContainerWidth = this.volumeScrubContainer.getBoundingClientRect().width;
+        let volumeProgressBarWidth = this.volumeProgressBar.getBoundingClientRect().width;
+
+        let movementFractional = (e.movementX / volumeScrubContainerWidth);
+        let volumeProgressBarWidthFractional = (volumeProgressBarWidth / volumeScrubContainerWidth);
+
+        console.log(volumeProgressBarWidthFractional);
+        let newVolume = this.videoElement.volume * (movementFractional + volumeProgressBarWidthFractional);
+
+        let totalPercent = ((movementFractional + volumeProgressBarWidthFractional) * 100).toFixed(2);
+
+        this.volumeProgressBar.style.width = totalPercent + "%";
+        this.volumeProgressHandle.style.left = totalPercent + "%";
+
+        this.videoElement.volume = newVolume;
+        console.log(this.videoElement.volume);
     }
 }
 export { VideoPlayer };
