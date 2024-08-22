@@ -6,6 +6,7 @@ class VideoPlayer {
         this.playBtn = ".play-pause-btn";
         this.fullScreenBtn = ".full-screen-btn";
         this.volumeBtn = ".volumn-btn";
+        this.muteIcon = ".mute-icon";
         this.settingsBtn = ".settings-btn";
         this.settingsMenu = ".settings-menu";
         this.playbackSpeedMenu = "#playbackSpeedMenu";
@@ -73,6 +74,19 @@ class VideoPlayer {
         let btn = this.videoContainer.querySelector(selector);
         if (btn) {
             this._volumnBtn = btn;
+        } else {
+            console.error("Cannot mute video");
+        }
+    }
+
+    get muteIcon() {
+        return this._muteIcon;
+    }
+
+    set muteIcon(selector) {
+        let btn = this.videoContainer.querySelector(selector);
+        if (btn) {
+            this._muteIcon = btn;
         } else {
             console.error("Cannot mute video");
         }
@@ -203,6 +217,7 @@ class VideoPlayer {
     setUpEvents() {
         this.playBtn.addEventListener("click", this.playPause);
         this.fullScreenBtn.addEventListener("click", this.FullExitScreen);
+        this.muteIcon.addEventListener("click", this.MuteUnmute);
         this.volumeBtn.addEventListener("click", this.MuteUnmute);
         this.settingsBtn.addEventListener("click", this.toggleSettingBtn);
         this.settingsMenu.addEventListener("click", this.toggleMenuItem);
@@ -253,17 +268,25 @@ class VideoPlayer {
         }
     }
 
+    MuteUnmute = (e) => {
+        if (this.videoElement.muted) {
+            this.unmute();
+        } else {
+            this.mute();
+        }
+    }
+
     mute() {
-        let volumeBtnIcon = this.volumeBtn.querySelector("i");
-        volumeBtnIcon.classList.remove("bi-volume-up-fill");
-        volumeBtnIcon.classList.add("bi-volume-mute-fill");
+        let muteBtnIcon = this.muteIcon.querySelector("i");
+        muteBtnIcon.classList.remove("bi-volume-up-fill");
+        muteBtnIcon.classList.add("bi-volume-mute-fill");
         this.videoElement.muted = true;
     }
 
     unmute() {
-        let volumeBtnIcon = this.volumeBtn.querySelector("i");
-        volumeBtnIcon.classList.remove("bi-volume-mute-fill");
-        volumeBtnIcon.classList.add("bi-volume-up-fill");
+        let muteBtnIcon = this.muteIcon.querySelector("i");
+        muteBtnIcon.classList.remove("bi-volume-mute-fill");
+        muteBtnIcon.classList.add("bi-volume-up-fill");
         this.videoElement.muted = false;
     }
 
