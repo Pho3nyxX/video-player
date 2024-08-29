@@ -80,7 +80,7 @@ class VideoPlayer {
         if (btn) {
             this._volumeBtn = btn;
         } else {
-            console.error("Cannot mute video");
+            console.error("Cannot adjust video volume");
         }
     }
 
@@ -354,16 +354,16 @@ class VideoPlayer {
     }
 
     mute() {
-        let muteBtnIcon = this.muteIcon.querySelector("i");
-        muteBtnIcon.classList.remove("bi-volume-up-fill");
-        muteBtnIcon.classList.add("bi-volume-mute-fill");
+        // let muteBtnIcon = this.muteIcon.querySelector("i");
+        this.muteIcon.classList.remove("bi-volume-up-fill");
+        this.muteIcon.classList.add("bi-volume-mute-fill");
         this.videoElement.muted = true;
     }
 
     unmute() {
-        let muteBtnIcon = this.muteIcon.querySelector("i");
-        muteBtnIcon.classList.remove("bi-volume-mute-fill");
-        muteBtnIcon.classList.add("bi-volume-up-fill");
+        // let muteBtnIcon = this.muteIcon.querySelector("i");
+        this.muteIcon.classList.remove("bi-volume-mute-fill");
+        this.muteIcon.classList.add("bi-volume-up-fill");
         this.videoElement.muted = false;
     }
 
