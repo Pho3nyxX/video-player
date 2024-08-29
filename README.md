@@ -7,7 +7,7 @@
  ## Features
 
 - **Playback Speed Control**: Allow users to change the playback speed of videos.
-- **Customizable Controls**: Use your on icons and colors with the Video Player
+- **Customizable Controls**: Use your own icons and colors with the Video Player.
 - **Available Controls**: Play/pause, mute/unmute, volume, fullscreen, exit fullscreen, draggable progress bar, etc.
 - **Keyboard Shortcuts**: space, keyK, keyF, keyM, ArrowRight, ArrowLeft, keyJ, keyL, Numpad0, didgit0.
 - **Events API**: Listen for events such as video near end to trigger custom behavior.
