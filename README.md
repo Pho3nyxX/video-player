@@ -38,7 +38,7 @@
 
 ## Installation
 
-You can install Video Player via npm:
+<!-- You can install Video Player via npm:
 
 ```bash
-npm install Video Player
+npm install Video Player -->

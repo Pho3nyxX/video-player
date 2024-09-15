@@ -35,6 +35,7 @@ body.full-page {
     display: flex;
     max-height: 100%;
     overflow: scroll;
+    background-color: #008080;
 
     .main {
         height: 100%;
@@ -46,8 +47,8 @@ body.full-page {
     color: var(--primary-green);
 }
 
-.red-text {
-    color: #f9061d;
+.white-text {
+    color: #fff;
 }
 
 /* --------------------------------- */
